@@ -48,25 +48,87 @@ class Part3Controller (object):
 
   def s1_setup(self):
     #put switch 1 rules here
-    pass
+    msg = of.ofp_flow_mod()
+    msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
+    self.connection.send(msg)
 
   def s2_setup(self):
     #put switch 2 rules here
-    pass
+    msg = of.ofp_flow_mod()
+    msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
+    self.connection.send(msg)
 
   def s3_setup(self):
     #put switch 3 rules here
-    pass
+    msg = of.ofp_flow_mod()
+    msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
+    self.connection.send(msg)
 
   def cores21_setup(self):
     #put core switch rules here
-    pass
+    msg = of.ofp_flow_mod()
+    msg.priority=1
+    msg.match.dl_type=0x0806
+    msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
+    self.connection.send(msg) 
+
+    msg = of.ofp_flow_mod()
+    msg.priority=10
+    msg.match.dl_type=0x800
+    msg.match.nw_proto=1
+    msg.match.nw_src=IPAddr('172.16.10.100')
+    self.connection.send(msg)
+    
+    msg=of.ofp_flow_mod()
+    msg.priority=9
+    msg.match.dl_type=0x800
+    msg.match.nw_src=IPAddr('172.16.10.100')
+    msg.match.nw_dst=IPAddr('10.0.4.10')
+    self.connection.send(msg)
+
+    msg=of.ofp_flow_mod()
+    msg.priority=8
+    msg.match.dl_type=0x800
+    msg.match.nw_dst=IPAddr('10.0.1.10')
+    msg.actions.append(of.ofp_action_output(port=1))
+    self.connection.send(msg)
+
+    msg=of.ofp_flow_mod()
+    msg.priority=7
+    msg.match.dl_type=0x800
+    msg.match.nw_dst=IPAddr('10.0.2.20')
+    msg.actions.append(of.ofp_action_output(port=2))
+    self.connection.send(msg)
+
+    msg=of.ofp_flow_mod()
+    msg.priority=6
+    msg.match.dl_type=0x800
+    msg.match.nw_dst=IPAddr('10.0.3.30')
+    msg.actions.append(of.ofp_action_output(port=3))
+    self.connection.send(msg)
+
+    msg=of.ofp_flow_mod()
+    msg.priority=5
+    msg.match.dl_type=0x800
+    msg.match.nw_dst=IPAddr('10.0.4.10')
+    msg.actions.append(of.ofp_action_output(port=5))
+    self.connection.send(msg)
+    
+    msg=of.ofp_flow_mod()
+    msg.priority=4
+    msg.match.dl_type=0x800
+    msg.match.nw_dst=IPAddr('172.16.10.100')
+    msg.actions.append(of.ofp_action_output(port=4))
+    self.connection.send(msg)
 
   def dcs31_setup(self):
     #put datacenter switch rules here
-    pass
 
-  #used in part 4 to handle individual ARP packets
+    msg = of.ofp_flow_mod()
+    msg.actions.append(of.ofp_action_output(port=of.OFPP_FLOOD))
+    self.connection.send(msg)
+
+#used in part 4 to handle individual ARP packets
   #not needed for part 3 (USE RULES!)
   #causes the switch to output packet_in on out_port
   def resend_packet(self, packet_in, out_port):
